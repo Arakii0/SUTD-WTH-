@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> 
+    <title>Document</title>
+</head>
+<body>
+    <button id = "start" type="button"> Start Recording</button>
+    <button id = "stop" type="button"> Stop Recording</button>
+    <audio id="audioPlay" controls></audio>
+</body>
+<script>
+    const socket = io()
+    let playAudio = document.getElementById('audioPlay');
+    var device = navigator.mediaDevices.getUserMedia({ audio: !0});
+    var items = [];
+    device.then(stream=>{
+        var recorder = new MediaRecorder(stream);
+        document.getElementById("start").addEventListener("click", function(){
+            recorder.start(100)
+        });
+        let chunks = [];
+        recorder.ondataavailable = (e) => {
+        chunks.push(e.data);
+        };
+        document.getElementById("stop").addEventListener("click", function(){
+            recorder.stop()
+            console.log("ended")
+                
+        });
+        recorder.onstop = (e) => {
+            console.log("stop event triggered");
+            const blob = new Blob(chunks, { type: "audio/mp3;"});
+            chunks = [];
+            const audioURL = window.URL.createObjectURL(blob);
+            playAudio.src = audioURL
+
+
+            socket.emit("microfeed",blob)
+            
+            console.log("sent to server")
+        };
+        
+    })
+</script>
+</html>
+
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/speech-to-txt.css') }}" rel="stylesheet" />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> 
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="v209_969">
+        <div class="v209_970"></div>
+        <div class="v209_971"></div>
+        <div class="v209_972">
+            <a href = "third.html" style = "text-decoration: none; color:white;">
+            <img src="/static/images/3-bar-menu-icon-6.jpg" style="height: 24px;width: 24px;">
+            <div class="v209_973"></div>
+        </a>
+        </div><span class="v209_974">SignSCRIBE</span>
+        <div class="v209_975"></div>
+        <div class="v209_976">
+            <div class="v209_977">
+                <img src="/static/images/mic.png" style="height: 24px;width: 24px;">
+                <div class="v209_978"></div>
+            </div>
+            <div class="v209_979"><a href = "sign-to-txt.html" style = "text-decoration: none; color:white;">
+                <img src="/static/images/black camera.png" style="height: 24px;width: 24px;">
+                <div class="v209_980"></div>
+                <div class="v209_981"></div>
+            </a>
+            </div><span class="v209_982">Speech-to-Text</span><span class="v209_983">Sign-to-Text</span></div>
+        <div class="v209_985">
+            <div class="v209_986"></div><span class="v209_987">English</span>
+            <div class="v209_988">
+                <div class="v209_989">
+                    <div class="v209_990">
+                        <div class="v209_991"></div>
+                    </div>
+                    <div class="v209_992">
+                        <img src="/static/images/usaflag.png" style="height: 25px;width: 25px;">
+                        <div class="v209_993"></div>
+                        <div class="v209_994"></div>
+                        <div class="v209_995"></div>
+                        <div class="v209_996"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="v209_997">
+            <img src="/static/images/arrow_down.png" style="height: 25px;width: 25px;">
+            </div>
+        </div><span class="v209_1008">Language Selector</span>
+        <div class="v209_1010">
+            <div class="v209_1011"></div><span class="v209_1012">English</span>
+            <div class="name"></div>
+            <div class="v209_1014">
+                <div class="v209_1015">
+                    <img src="/static/images/whitemic.jpg" style="height: 25px;width: 25px;" id ="voicebut">
+                    <div class="v209_1016"></div>
+                    <div class="v209_1017"></div>
+                </div>
+            </div>
+        </div><span class="v209_1018">Speech-to-Text</span></div>
+</body>
+<script>
+    const socket = io()
+    socket.on("waiting_data",function(data){
+        let textfield = document.getElementsByClassName("v209_1012")[0]
+        textfield.innerText = data
+    })
+    let click_status = 0
+    let voicebutt = document.getElementsByClassName("v209_1014")[0]
+    voicebutt.addEventListener("click",function(){
+        console.log("you clicked me Amos")
+        let imgtoch = document.getElementById("voicebut");
+        if (click_status == 0){
+            imgtoch.src = "https://th.bing.com/th/id/OIP.zX1_IpRnBAH1-gp2gWaCAAHaHa?pid=ImgDet&rs=1"
+            click_status = 1
+        }
+        else{
+            imgtoch.src = "/static/images/whitemic.jpg"
+            click_status = 0
+            setInterval(() => {
+                socket.emit("get_data")
+                console.log("I have ran same code :123")
+            }, 5000);
+        }
+
+    })
+</script>
+</html>

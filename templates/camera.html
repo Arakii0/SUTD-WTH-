@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/camera.css') }}" rel="stylesheet" />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> 
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="v11_756">
+        <div class="v11_757"></div>
+        <div class="v11_758"></div>
+        <div class="v21_113">
+            <video id="vid" autoplay playsinlne width="auto" height="auto" style = " object-fit: cover; height: 100vh;position: absolute;left: -50%;"></video>
+            <canvas id="canvas" style = "display:none;"></canvas>
+        </div>
+        <div class="v209_525">
+            <div class="v209_526"></div><h1 id="display">Show your signs</h1>
+            
+         
+        </div><span class="v11_761">Sign translation</span>
+        <div class="v11_846">
+            <a href = "sign-to-txt.html" style = "text-decoration: none; color:white;">
+            <img src="/static/images/arrow_left.png" style="height: 25px;width: 25px;">
+            <div class="v11_847"></div>
+            </a>    
+        </div>
+        <div class="v21_114"><img src="https://www.goodfreephotos.com/albums/vector-images/speaker-icon-vector-art.png" style="z-index: 1;width: 40px;height: 40px;transform: translate(-50%,-50%);position: absolute;top: 50%;left: 50%;"></div>
+        <div class="v21_115"></div>
+        <div class="v21_116"></div>
+        <div class="v24_41">
+            <div class="v24_42"></div>
+        </div>
+        <audio autoplay id = "autoplayaudio" style="display: none;">
+            <source src="" type="audio/mp3"/>
+        </audio>
+    </div>
+</body>
+<script>
+    const socket = io()
+    document.addEventListener("DOMContentLoaded", () => {
+        let video = document.getElementById("vid");
+        let mediaDevices = navigator.mediaDevices;
+        const canvas = document.getElementById('canvas');
+        vid.muted = true;
+        socket.on("char",function(data){
+            console.log(data["char"])
+            console.log("recieved client side")
+            let text = document.getElementById("display");
+            console.log(text)
+            text.innerText = "works";
+            text.innerText = String(data["char"]);
+        })
+        let button  = document.getElementsByClassName("v21_114")[0]
+        button.addEventListener("click",function(){
+            socket.emit("speak")
+        })
+        socket.on("speaker_ready",function(){
+            let audio = document.getElementById("autoplayaudio");
+            audio.style.display = "None";
+            audio.src = "http://127.0.0.1:5000/a";
+        })
+        setInterval(myMethod, 300);
+        function myMethod( )
+        {   
+        /* set the canvas to the dimensions of the video feed */
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext("2d");
+        const src = ctx.getImageData(0, 0,200, 200,{ willReadFrequently: true }).data
+        socket.emit("video_feed",String(src));
+        }
+            // Accessing the user camera and video.
+            mediaDevices
+                .getUserMedia(
+constraints = {
+video: { 
+width: 200,
+height: 200,
+frameRate: 30
+  }
+})
+                .then((stream) => {
+ 
+                    // Changing the source of video to current stream.
+                    video.srcObject = stream;
+                    video.addEventListener("loadedmetadata", () => {
+                        video.play();
+                    });
+                    stream
+                })
+                .catch(alert);
+
+    });
+</script>
+</html>
